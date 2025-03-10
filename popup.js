@@ -1,42 +1,19 @@
 /**
- * Genova Payment Popup Script
- * Version 1.0.0
+ * Genova Payment Popup Script (Fixed Version)
  * 
- * This script allows easy integration of Genova payment popups
- * into any website by adding a simple button with a data attribute.
+ * This modified script ensures the payment page opens in a popup
+ * window rather than a new tab.
  */
 
+// Use an immediately invoked function expression to avoid global scope pollution
 (function() {
   // Configuration
   const POPUP_WIDTH = 500;
   const POPUP_HEIGHT = 700;
   
-  // Create and append styles
-  const style = document.createElement('style');
-  style.textContent = `
-    .genova-pay-button {
-      background-color: #4CAF50;
-      border: none;
-      color: white;
-      padding: 10px 20px;
-      text-align: center;
-      text-decoration: none;
-      display: inline-block;
-      font-size: 16px;
-      margin: 4px 2px;
-      cursor: pointer;
-      border-radius: 4px;
-    }
-    
-    .genova-pay-button:hover {
-      background-color: #45a049;
-    }
-  `;
-  document.head.appendChild(style);
-  
   // Main function to initialize the payment buttons
   function initGenovaPayButtons() {
-    // Find all buttons with the genova-pay-button class
+    // Find all buttons with the genova-pay-button class or data-genova-pay attribute
     const buttons = document.querySelectorAll('.genova-pay-button, [data-genova-pay]');
     
     buttons.forEach(button => {
@@ -55,16 +32,19 @@
         const left = (window.innerWidth - POPUP_WIDTH) / 2 + window.screenX;
         const top = (window.innerHeight - POPUP_HEIGHT) / 2 + window.screenY;
         
-        // Open the payment popup
+        // The specific window features string is important for opening a popup
         const popup = window.open(
           `https://genovatransact.com/pay/${paymentId}`,
           'GenovaPayment',
-          `width=${POPUP_WIDTH},height=${POPUP_HEIGHT},top=${top},left=${left},resizable=yes,scrollbars=yes,status=yes`
+          `width=${POPUP_WIDTH},height=${POPUP_HEIGHT},top=${top},left=${left},toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes`
         );
         
         if (!popup || popup.closed || typeof popup.closed === 'undefined') {
           alert('Popup blocked! Please allow popups for this website to make payments.');
         }
+        
+        // Return false to prevent any default action
+        return false;
       });
     });
   }
